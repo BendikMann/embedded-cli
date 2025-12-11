@@ -878,12 +878,7 @@ static void parseCommand(EmbeddedCli *cli) {
                 embeddedCliTokenizeArgs(cmdArgs);
             // currently, output is blank line, so we can just print directly
             SET_FLAG(impl->flags, CLI_FLAG_DIRECT_PRINT);
-            // check if help was requested (help is printed when no other options are set)
-            if (cmdArgs != NULL && (strcmp(cmdArgs, "-h") == 0 || strcmp(cmdArgs, "--help") == 0)) {
-                printBindingHelp(cli, &impl->bindings[i]);
-            } else {
-                impl->bindings[i].binding(cli, cmdArgs, impl->bindings[i].context);
-            }
+            impl->bindings[i].binding(cli, cmdArgs, impl->bindings[i].context);
             UNSET_U8FLAG(impl->flags, CLI_FLAG_DIRECT_PRINT);
             return;
         }
