@@ -174,6 +174,9 @@ Terminal is required for correct experience. Following control sequences are res
 * \t moves cursor to the end of autocompleted command
 * Esc[A (key up) and Esc[B (key down) navigates through history
 * Esc[C (key right) and Esc[D (key left) moves the cursor left and right
+* Esc[H (Home) or Esc[1~ / Esc[7~ moves the cursor to the start of the line
+* Esc[F (End) or Esc[4~ / Esc[8~ moves the cursor to the end of the line
+* Esc[3~ (Delete) deletes the character at the cursor position
 
 If you run CLI through a serial port (like on Arduino with its UART-USB converter),
 you can use for example PuTTY (Windows) or XTerm (Linux).
