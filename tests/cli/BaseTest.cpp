@@ -166,6 +166,24 @@ TEST_CASE("CLI. Base tests", "[cli]") {
         REQUIRE(displayed.cursorColumn == 5);
     }
 
+    SECTION("Move cursor to start with 1~ alternative sequence") {
+        cli.send(" both\x1B[1~get");
+        cli.process();
+        auto displayed = cli.getDisplay();
+        REQUIRE(displayed.lines.size() == 1);
+        REQUIRE(displayed.lines[0] == "> get both");
+        REQUIRE(displayed.cursorColumn == 5);
+    }
+
+    SECTION("Move cursor to start with 7~ alternative sequence") {
+        cli.send(" both\x1B[1~get");
+        cli.process();
+        auto displayed = cli.getDisplay();
+        REQUIRE(displayed.lines.size() == 1);
+        REQUIRE(displayed.lines[0] == "> get both");
+        REQUIRE(displayed.cursorColumn == 5);
+    }
+
     SECTION("Move cursor to start then end") {
         cli.send("both\x1B[Hget \x1B[F");
         cli.process();
@@ -175,8 +193,36 @@ TEST_CASE("CLI. Base tests", "[cli]") {
         REQUIRE(displayed.cursorColumn == 10);
     }
 
+    SECTION("Move cursor to start then end with 4~ alternative sequence") {
+        cli.send("both\x1B[Hget \x1B[4~");
+        cli.process();
+        auto displayed = cli.getDisplay();
+        REQUIRE(displayed.lines.size() == 1);
+        REQUIRE(displayed.lines[0] == "> get both");
+        REQUIRE(displayed.cursorColumn == 10);
+    }
+
+
+    SECTION("Move cursor to start then end with 8~ alternative sequence") {
+        cli.send("both\x1B[Hget \x1B[8~");
+        cli.process();
+        auto displayed = cli.getDisplay();
+        REQUIRE(displayed.lines.size() == 1);
+        REQUIRE(displayed.lines[0] == "> get both");
+        REQUIRE(displayed.cursorColumn == 10);
+    }
+
     SECTION("Move cursor back and perform Delete by Control Sequence") {
         cli.send("get baoth\x1B[D\x1B[D\x1B[D\x1B\x1B[D\x1B[3~");
+        cli.process();
+        auto displayed = cli.getDisplay();
+        REQUIRE(displayed.lines.size() == 1);
+        REQUIRE(displayed.lines[0] == "> get both");
+        REQUIRE(displayed.cursorColumn == 7);
+    }
+
+    SECTION("Move cursor back and perform Delete") {
+        cli.send("get baoth\x1B[D\x1B[D\x1B[D\x1B\x1B[D\x7f");
         cli.process();
         auto displayed = cli.getDisplay();
         REQUIRE(displayed.lines.size() == 1);
