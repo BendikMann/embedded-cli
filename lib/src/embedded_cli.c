@@ -830,9 +830,10 @@ static void onControlInput(EmbeddedCli *cli, char c) {
         impl->cursorPos = 0;
 
         writeToOutput(cli, impl->invitation);
+    // backspace or del
     } else if ((c == '\b' || c == 0x7F) && ((impl->cmdSize - impl->cursorPos) > 0)) {
         // remove char from screen
-        writeToOutput(cli, escSeqCursorLeft); // Move cursor to left
+        if (c == '\b') writeToOutput(cli, escSeqCursorLeft); // Move cursor to left
         writeToOutput(cli, escSeqDeleteChar); // And remove character
         // and from buffer
         size_t insertPos = strlen(impl->cmdBuffer) - impl->cursorPos;
@@ -901,7 +902,12 @@ static void parseCommand(EmbeddedCli *cli) {
                 embeddedCliTokenizeArgs(cmdArgs);
             // currently, output is blank line, so we can just print directly
             SET_FLAG(impl->flags, CLI_FLAG_DIRECT_PRINT);
-            impl->bindings[i].binding(cli, cmdArgs, impl->bindings[i].context);
+            // check if help was requested (help is printed when no other options are set)
+            if (cmdArgs != NULL && (strcmp(cmdArgs, "-h") == 0 || strcmp(cmdArgs, "--help") == 0)) {
+                printBindingHelp(cli, &impl->bindings[i]);
+            } else {
+                impl->bindings[i].binding(cli, cmdArgs, impl->bindings[i].context);
+            }
             UNSET_U8FLAG(impl->flags, CLI_FLAG_DIRECT_PRINT);
             return;
         }

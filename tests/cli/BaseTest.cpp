@@ -157,6 +157,33 @@ TEST_CASE("CLI. Base tests", "[cli]") {
         REQUIRE(displayed.cursorColumn == 7);
     }
 
+    SECTION("Move cursor to start") {
+        cli.send(" both\x1B[Hget");
+        cli.process();
+        auto displayed = cli.getDisplay();
+        REQUIRE(displayed.lines.size() == 1);
+        REQUIRE(displayed.lines[0] == "> get both");
+        REQUIRE(displayed.cursorColumn == 5);
+    }
+
+    SECTION("Move cursor to start then end") {
+        cli.send("both\x1B[Hget \x1B[F");
+        cli.process();
+        auto displayed = cli.getDisplay();
+        REQUIRE(displayed.lines.size() == 1);
+        REQUIRE(displayed.lines[0] == "> get both");
+        REQUIRE(displayed.cursorColumn == 10);
+    }
+
+    SECTION("Move cursor back and perform Delete by Control Sequence") {
+        cli.send("get baoth\x1B[D\x1B[D\x1B[D\x1B\x1B[D\x1B[3~");
+        cli.process();
+        auto displayed = cli.getDisplay();
+        REQUIRE(displayed.lines.size() == 1);
+        REQUIRE(displayed.lines[0] == "> get both");
+        REQUIRE(displayed.cursorColumn == 7);
+    }
+
     SECTION("Command that is too long") {
         size_t cmdMax = embeddedCliDefaultConfig()->cmdBufferSize;
         std::string cmdMaxTest = std::string(cmdMax/2, 'x');
