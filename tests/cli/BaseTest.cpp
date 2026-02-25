@@ -230,6 +230,35 @@ TEST_CASE("CLI. Base tests", "[cli]") {
         REQUIRE(displayed.cursorColumn == 7);
     }
 
+    SECTION("Delete at end of section") {
+        cli.sendLine("set example\x7f");
+        cli.process();
+
+        auto lines = cli.getDisplay().lines;
+
+        REQUIRE(lines[0] == "> set example");
+
+    }
+
+    SECTION("Delete at end of section with alternative sequence") {
+        cli.sendLine("set example\x7f");
+        cli.process();
+
+        auto lines = cli.getDisplay().lines;
+
+        REQUIRE(lines[0] == "> set example");
+
+    }
+
+    SECTION("Delete at start of line should work") {
+        cli.sendLine("nset\x1B[D\x1B[D\x1B[D\x1B[D\x7f");
+        cli.process();
+
+        auto lines = cli.getDisplay().lines;
+
+        REQUIRE(lines[0] == "> set");
+    }
+
     SECTION("Command that is too long") {
         size_t cmdMax = embeddedCliDefaultConfig()->cmdBufferSize;
         std::string cmdMaxTest = std::string(cmdMax/2, 'x');

@@ -776,7 +776,7 @@ static void onEscapedInput(EmbeddedCli *cli, char c) {
             }
         }
         // Delete
-        if (c == '~' && impl->lastChar == '3' && impl->cursorPos > 0) {
+        if (c == '~' && impl->lastChar == '3' && impl->cursorPos != 0) {
             size_t insertPos = strlen(impl->cmdBuffer) - impl->cursorPos;
             memmove(&impl->cmdBuffer[insertPos], &impl->cmdBuffer[insertPos + 1], impl->cursorPos);
             --impl->cmdSize;
@@ -839,7 +839,7 @@ static void onControlInput(EmbeddedCli *cli, char c) {
         memmove(&impl->cmdBuffer[insertPos - 1], &impl->cmdBuffer[insertPos], impl->cursorPos + 1);
         --impl->cmdSize;
         // Delete
-    } else if (c == 0x7F && ((impl->cmdSize - impl->cursorPos) > 0)){
+    } else if (c == 0x7F && impl->cursorPos != 0){
         size_t insertPos = strlen(impl->cmdBuffer) - impl->cursorPos;
         memmove(&impl->cmdBuffer[insertPos], &impl->cmdBuffer[insertPos + 1], impl->cursorPos);
         --impl->cmdSize;
