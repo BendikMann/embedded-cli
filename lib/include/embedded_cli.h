@@ -304,6 +304,8 @@ uint16_t embeddedCliFindToken(const char *tokenizedStr, const char *token);
  */
 uint16_t embeddedCliGetTokenCount(const char *tokenizedStr);
 
+void embeddedCliToggleAutocomplete(EmbeddedCli *cli);
+
 #ifdef __cplusplus
 }
 #endif

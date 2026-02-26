@@ -706,6 +706,18 @@ uint16_t embeddedCliGetTokenCount(const char *tokenizedStr) {
     return tokenCount;
 }
 
+void embeddedCliToggleAutocomplete(EmbeddedCli *cli) {
+    PREPARE_IMPL(cli);
+
+    if (IS_FLAG_SET(impl->flags, CLI_FLAG_AUTOCOMPLETE_ENABLED)) {
+        UNSET_U8FLAG(impl->flags, CLI_FLAG_AUTOCOMPLETE_ENABLED);
+    } else {
+        SET_FLAG(impl->flags, CLI_FLAG_AUTOCOMPLETE_ENABLED);
+    }
+
+
+}
+
 static void navigateHistory(EmbeddedCli *cli, bool navigateUp) {
     PREPARE_IMPL(cli);
     if (impl->history.itemsCount == 0 ||
