@@ -222,7 +222,7 @@ TEST_CASE("CLI. Base tests", "[cli]") {
     }
 
     SECTION("Move cursor back and perform Delete") {
-        cli.send("get baoth\x1B[D\x1B[D\x1B[D\x1B\x1B[D\x7f");
+        cli.send("get baoth\x1B[D\x1B[D\x1B[D\x1B\x1B[D\x1B[3~");
         cli.process();
         auto displayed = cli.getDisplay();
         REQUIRE(displayed.lines.size() == 1);
@@ -231,17 +231,7 @@ TEST_CASE("CLI. Base tests", "[cli]") {
     }
 
     SECTION("Delete at end of section") {
-        cli.sendLine("set example\x7f");
-        cli.process();
-
-        auto lines = cli.getDisplay().lines;
-
-        REQUIRE(lines[0] == "> set example");
-
-    }
-
-    SECTION("Delete at end of section with alternative sequence") {
-        cli.sendLine("set example\x7f");
+        cli.sendLine("set example\x1B[3~");
         cli.process();
 
         auto lines = cli.getDisplay().lines;
@@ -251,7 +241,7 @@ TEST_CASE("CLI. Base tests", "[cli]") {
     }
 
     SECTION("Delete at start of line should work") {
-        cli.sendLine("nset\x1B[D\x1B[D\x1B[D\x1B[D\x7f");
+        cli.sendLine("nset\x1B[D\x1B[D\x1B[D\x1B[D\x1B[3~");
         cli.process();
 
         auto lines = cli.getDisplay().lines;

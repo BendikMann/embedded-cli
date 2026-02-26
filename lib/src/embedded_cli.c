@@ -830,7 +830,7 @@ static void onControlInput(EmbeddedCli *cli, char c) {
         impl->cursorPos = 0;
 
         writeToOutput(cli, impl->invitation);
-    } else if (c == '\b' && ((impl->cmdSize - impl->cursorPos) > 0)) {
+    } else if ((c == '\b' || c == 0x7F) && ((impl->cmdSize - impl->cursorPos) > 0)) {
         // remove char from screen
         writeToOutput(cli, escSeqCursorLeft); // Move cursor to left
         writeToOutput(cli, escSeqDeleteChar); // And remove character
@@ -838,13 +838,6 @@ static void onControlInput(EmbeddedCli *cli, char c) {
         size_t insertPos = strlen(impl->cmdBuffer) - impl->cursorPos;
         memmove(&impl->cmdBuffer[insertPos - 1], &impl->cmdBuffer[insertPos], impl->cursorPos + 1);
         --impl->cmdSize;
-        // Delete
-    } else if (c == 0x7F && impl->cursorPos != 0){
-        size_t insertPos = strlen(impl->cmdBuffer) - impl->cursorPos;
-        memmove(&impl->cmdBuffer[insertPos], &impl->cmdBuffer[insertPos + 1], impl->cursorPos);
-        --impl->cmdSize;
-        --impl->cursorPos;
-        writeToOutput(cli, escSeqDeleteChar);
     } else if (c == '\t') {
         onAutocompleteRequest(cli);
     }
